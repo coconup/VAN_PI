@@ -1473,7 +1473,7 @@
         "z": "1f780f8f.dbcd5",
         "name": "set global variables",
         "info": "",
-        "x": 250,
+        "x": 210,
         "y": 120,
         "wires": []
     },
