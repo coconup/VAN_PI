@@ -1452,8 +1452,8 @@
         "topic": "",
         "payload": "",
         "payloadType": "date",
-        "x": 230,
-        "y": 220,
+        "x": 250,
+        "y": 300,
         "wires": [
             [
                 "bb0abe7e.248eb",
@@ -1471,10 +1471,10 @@
         "id": "a47e398b.260cf8",
         "type": "comment",
         "z": "1f780f8f.dbcd5",
-        "name": "set global variables ",
+        "name": "set global variables",
         "info": "",
-        "x": 210,
-        "y": 180,
+        "x": 250,
+        "y": 120,
         "wires": []
     },
     {
