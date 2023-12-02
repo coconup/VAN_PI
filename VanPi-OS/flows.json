@@ -206,6 +206,14 @@
         "info": ""
     },
     {
+        "id": "89994071a3026534",
+        "type": "tab",
+        "label": "Security",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
         "id": "d9229161.b8548",
         "type": "ui_group",
         "name": "Switches",
@@ -1415,6 +1423,91 @@
         "height": 1
     },
     {
+        "id": "a414bd12a2381eda",
+        "type": "ui_tab",
+        "name": "Security",
+        "icon": "security",
+        "order": 20,
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "702a94542631b5dd",
+        "type": "ui_spacer",
+        "z": "e2902b7e.e22d58",
+        "name": "spacer",
+        "group": "692e88bfa7c83733",
+        "order": 1,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "da64ad927467e077",
+        "type": "ui_group",
+        "name": "blink-login",
+        "tab": "a414bd12a2381eda",
+        "order": 1,
+        "disp": false,
+        "width": 10,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "1aa66b87.2386cc",
+        "type": "ui_group",
+        "name": "^ Page Menu (three bars)",
+        "tab": "66f9da05.cd6dec",
+        "order": 1,
+        "disp": true,
+        "width": "15",
+        "collapse": false
+    },
+    {
+        "id": "66f9da05.cd6dec",
+        "type": "ui_tab",
+        "name": "Summary",
+        "icon": "flight_takeoff",
+        "order": 1,
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "bbf887c93028d65a",
+        "type": "ui_group",
+        "name": "blink-pin-verification",
+        "tab": "a414bd12a2381eda",
+        "order": 2,
+        "disp": false,
+        "width": 10,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "160ddf0a.756f41",
+        "type": "ui_group",
+        "name": "Secure",
+        "tab": "f83ce942.20d488",
+        "order": 1,
+        "disp": true,
+        "width": "6"
+    },
+    {
+        "id": "4f3d9279.22b82c",
+        "type": "ui_group",
+        "name": "pin",
+        "tab": "f83ce942.20d488",
+        "order": 2,
+        "disp": false,
+        "width": "1"
+    },
+    {
+        "id": "f83ce942.20d488",
+        "type": "ui_tab",
+        "name": "Home",
+        "icon": "home",
+        "order": 1
+    },
+    {
         "id": "bb0abe7e.248eb",
         "type": "function",
         "z": "1f780f8f.dbcd5",
@@ -1459,11 +1552,11 @@
                 "bb0abe7e.248eb",
                 "c3e179f9.47e318",
                 "14b4a7d6.23a9e8",
-                "72204697.5e7d18",
                 "71e76301.9a03bc",
                 "cb58f8fd7638bcad",
                 "73133552bf558250",
-                "e88d437867a17dad"
+                "e88d437867a17dad",
+                "72204697.5e7d18"
             ]
         ]
     },
@@ -92464,5 +92557,410 @@
         "wires": [
             []
         ]
+    },
+    {
+        "id": "6f5aeb9cddf6651d",
+        "type": "ui_form",
+        "z": "89994071a3026534",
+        "name": "",
+        "label": "Blink login",
+        "group": "da64ad927467e077",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "options": [
+            {
+                "label": "Username",
+                "value": "username",
+                "type": "text",
+                "required": true,
+                "rows": null
+            },
+            {
+                "label": "Password",
+                "value": "password",
+                "type": "password",
+                "required": true,
+                "rows": null
+            }
+        ],
+        "formValue": {
+            "username": "",
+            "password": ""
+        },
+        "payload": "",
+        "submit": "Submit",
+        "cancel": "Cancel",
+        "topic": "topic",
+        "topicType": "msg",
+        "splitLayout": "",
+        "className": "",
+        "x": 150,
+        "y": 140,
+        "wires": [
+            [
+                "fc9b333fcd47d61f"
+            ]
+        ]
+    },
+    {
+        "id": "d3bf03c472f14b5c",
+        "type": "debug",
+        "z": "89994071a3026534",
+        "name": "debug 57",
+        "active": true,
+        "tosidebar": true,
+        "console": true,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1490,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "e32096b8a497ce6b",
+        "type": "template",
+        "z": "89994071a3026534",
+        "name": "set payload",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "{\n  \"unique_id\": \"node-red-test-{{rand}}\",\n  \"password\": \"{{payload.password}}\",\n  \"email\": \"{{payload.username}}\"\n}",
+        "output": "json",
+        "x": 470,
+        "y": 260,
+        "wires": [
+            [
+                "38846a29f0f17f02",
+                "fa36bd61130fa111"
+            ]
+        ]
+    },
+    {
+        "id": "38846a29f0f17f02",
+        "type": "http request",
+        "z": "89994071a3026534",
+        "name": "login",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "https://rest-prod.immedia-semi.com/api/v5/account/login",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [
+            {
+                "keyType": "other",
+                "keyValue": "Content-Type",
+                "valueType": "other",
+                "valueValue": "application/json"
+            }
+        ],
+        "x": 630,
+        "y": 300,
+        "wires": [
+            [
+                "38c340be3a5d194e",
+                "19b34a85d431b8b3"
+            ]
+        ]
+    },
+    {
+        "id": "38c340be3a5d194e",
+        "type": "switch",
+        "z": "89994071a3026534",
+        "name": "",
+        "property": "payload.message",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "Invalid credentials",
+                "vt": "str"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "false",
+        "repair": false,
+        "outputs": 2,
+        "x": 770,
+        "y": 340,
+        "wires": [
+            [],
+            [
+                "947e26be1abafcd4"
+            ]
+        ]
+    },
+    {
+        "id": "3e26a744de533099",
+        "type": "ui_template",
+        "z": "89994071a3026534",
+        "group": "bbf887c93028d65a",
+        "name": "Pin_Unlock",
+        "order": 0,
+        "width": "0",
+        "height": "0",
+        "format": "<div ng-init=\"init()\" id=\"pin_insert\" class=\"dialog\">\n\n    <div class=\"dialog_content\">\n\n        <div class=\"dialog_header\">\n            <span ng-click=\"closeDialog()\" class=\"close\">&times;</span>\n            <h2 style=\"margin:10px\">Insert PIN</h2>\n        </div>\n\n        <div class=\"dialog_body\">\n\n            <div layout=\"row\" layout-align=\"center\">\n                <div class=\"number_placeholder\">\n                    {{passcode.substring(0, 1)}}\n                </div>\n                <div class=\"number_placeholder\">\n                    {{passcode.substring(1, 2)}}\n                </div>\n                <div class=\"number_placeholder\">\n                    {{passcode.substring(2, 3)}}\n                </div>\n                <div class=\"number_placeholder\">\n                    {{passcode.substring(3, 4)}}\n                </div>\n                <div class=\"number_placeholder\">\n                    {{passcode.substring(4, 5)}}\n                </div>\n                <div class=\"number_placeholder\">\n                    {{passcode.substring(5, 6)}}\n                </div>\n            </div>\n\n            <div layout=\"column\" layout-align=\"center\" style=\"margin-top: 10px\">\n                <div layout=\"row\" layout-align=\"center\">\n                    <div class=\"number_box\">\n                        <md-button class=\"pin\" ng-click=\"add(1)\">1</md-button>\n                    </div>\n                    <div class=\"number_box\">\n                        <md-button class=\"pin\" ng-click=\"add(2)\">2</md-button>\n                    </div>\n                    <div class=\"number_box\">\n                        <md-button class=\"pin\" ng-click=\"add(3)\">3</md-button>\n                    </div>\n                </div>\n                <div layout=\"row\" layout-align=\"center\">\n                    <div class=\"number_box\">\n                        <md-button class=\"pin\" ng-click=\"add(4)\">4</md-button>\n                    </div>\n                    <div class=\"number_box\">\n                        <md-button class=\"pin\" ng-click=\"add(5)\">5</md-button>\n                    </div>\n                    <div class=\"number_box\">\n                        <md-button class=\"pin\" ng-click=\"add(6)\">6</md-button>\n                    </div>\n                </div>\n                <div layout=\"row\" layout-align=\"center\">\n                    <div class=\"number_box\">\n                        <md-button class=\"pin\" ng-click=\"add(7)\">7</md-button>\n                    </div>\n                    <div class=\"number_box\">\n                        <md-button class=\"pin\" ng-click=\"add(8)\">8</md-button>\n                    </div>\n                    <div class=\"number_box\">\n                        <md-button class=\"pin\" ng-click=\"add(9)\">9</md-button>\n                    </div>\n                </div>\n                <div layout=\"row\" layout-align=\"center\">\n                    <div class=\"number_box\">\n                        <md-button class=\"pin\" ng-click=\"confirm()\">\n                            <ng-md-icon icon=\"done\" style=\"color:#fff;\"></ng-md-icon>\n                        </md-button>\n                    </div>\n                    <div class=\"number_box\">\n                        <md-button class=\"pin\" ng-click=\"add(0)\">0</md-button>\n                    </div>\n                    <div class=\"number_box\">\n                        <md-button class=\"pin\" ng-click=\"delete()\">\n                            <ng-md-icon icon=\"arrow_back\" style=\"color:#fff;\"></ng-md-icon>\n                        </md-button>\n                    </div>\n                </div>\n            </div>\n\n        </div>\n        <!--dialog_body-->\n    </div>\n    <!--dialog_content-->\n</div>\n<!--dialog-->\n\n\n<style>\n    /* The Dialog (background) */\n    .dialog {\n        display: none;\n        /* Hidden by default */\n        position: fixed;\n        /* Stay in place */\n        z-index: 9999;\n        /* Sit on top */\n        left: 0;\n        top: 0;\n        width: 100%;\n        /* Full width */\n        height: 100%;\n        /* Full height */\n        overflow: auto;\n        /* Enable scroll if needed */\n        background-color: rgb(0, 0, 0);\n        /* Fallback color */\n        background-color: rgba(0, 0, 0, 0.4);\n        /* Black w/ opacity */\n        -webkit-transform: translateZ(0px);\n        -webkit-transform: translate3d(0, 0, 0);\n        -webkit-perspective: 1000;\n    }\n\n    .dialog_content {\n        position: absolute;\n        background-color: #fff;\n        left: calc(50% - 170px);\n        top: 30px;\n        border-radius: 10px;\n        padding: 0;\n        width: 340px;\n        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);\n        -webkit-animation-name: animatetop;\n        animation-name: animatetop;\n        animation-duration: 0.4s;\n    }\n\n    /* Media query for smartphones (to Fix?) */\n    @media only screen and (min-device-width : 375px) and (max-device-width : 667px) {\n        .dialog_content {\n            margin-top: 5%;\n            margin-left: 5%;\n        }\n    }\n\n    /* Add Animation */\n    @-webkit-keyframes animatetop {\n        from {\n            top: -300px;\n            opacity: 0\n        }\n\n        to {\n            top: 0;\n            opacity: 1\n        }\n    }\n\n    @keyframes animatetop {\n        from {\n            top: -300px;\n            opacity: 0\n        }\n\n        to {\n            top: 0;\n            opacity: 1\n        }\n    }\n\n    /* Dialog Header */\n    .dialog_header {\n        padding: 2px 16px;\n        background-color: #03A9F4;\n        border-radius: 10px 10px 0 0;\n        color: white;\n    }\n\n    /* Dialog Body */\n    .dialog_body {\n        padding: 5px;\n    }\n\n    /* The Close Button */\n    .close {\n        color: #fff;\n        float: right;\n        font-size: 28px;\n        font-weight: bold;\n        cursor: pointer;\n    }\n\n    .close:hover,\n    .close:focus {\n        color: #1565C0;\n        text-decoration: none;\n        cursor: pointer;\n    }\n\n    /* __ */\n    .number_placeholder {\n        width: 50px;\n        height: 34px;\n        margin: 10px;\n        font-size: 20pt;\n        text-align: center;\n        border-bottom: 1px solid black;\n    }\n\n    /* Number container */\n    .number_box {\n        margin: 5px;\n    }\n\n    /* Buttons style */\n    .pin {\n        min-height: 50px;\n        min-width: 50px;\n        font-weight: bold;\n        margin: 0px 10px 10px 0px;\n        box-shadow: 4px 4px 6px 0 #dadada;\n        background-color: #29B6F6;\n        color: #fff;\n    }\n\n    .pin:not([disabled]):hover {\n        background-color: #03A9F4;\n    }\n\n    .btn1 {\n        color: rgb(49, 46, 46);\n        background-color: rgba(255, 222, 121, 0.96);\n        border-radius: 10px 0 0 10px;\n        font-size: 16px;\n    }\n\n    .btn1:not([disabled]):hover {\n        background-color: rgba(107, 103, 91, 0.96);\n        color: white;\n    }\n\n    .btn1[disabled] {\n        color: rgb(187, 187, 187);\n        background-color: rgba(230, 230, 229, 0.96);\n    }\n</style>\n\n<script>\n    /**\n * pin_dialog.js\n * Node-Red UI template for Node-Red Dashboard. \n * Custom dialog that asks for a PIN to allow actions\n * Enjoy it :). \n * -- Daniel\n *\n *\n * @license The Unlicense, http://unlicense.org/\n * @version 0.2\n * @author  Daniel Lando, https://github.com/robertsLando\n * @updated 2019-03-18\n * @link    ----\n *\n *\n */\n\nvar dialog;\n\n/* ==== */\n(function(scope) {\n    \n    scope.passcode = \"\";\n    scope.payload = \"\";\n    scope.inited = false;\n    \n    scope.init = function() {\n        scope.passcode = \"\";\n        //Hide the md-panel\n        $('#pin_insert').parent().parent().css(\"display\", \"none\");\n        //This trick make it works on smartphones too :)\n        dialog = $('#pin_insert').detach();\n        //remove any previously added pin dialog\n        $('.dialog').remove();\n        scope.inited = true;\n    }\n    \n    scope.showDialog = function() {\n        dialog.appendTo(document.body);\n        dialog.css(\"display\", \"block\");\n    }\n    \n    scope.closeDialog = function(){\n        dialog.css(\"display\", \"none\");\n    }\n    \n    scope.add = function(value) {\n        if(scope.passcode.length < 6) {\n            scope.passcode = scope.passcode + value;\n            if(scope.passcode.length == 6) {\n                console.log(\"The six digit code was entered\");\n            }\n        }\n    }\n \n    scope.delete = function() {\n        if(scope.passcode.length > 0) {\n            scope.passcode = scope.passcode.substring(0, scope.passcode.length - 1);\n        }\n    }\n    \n    scope.confirm = function() {\n        if(scope.passcode.length == 6) {\n            scope.send({\n                verify_url: {\n                    tier: scope.payload.tier,\n                    account_id: scope.payload.account_id,\n                    client_id: scope.payload.client_id,\n                    auth_token: scope.payload.auth_token\n                },\n                payload: {\n                    pin: scope.passcode\n                }\n            });\n            scope.closeDialog();\n            scope.passcode = \"\";\n            scope.payload = \"\";\n        }\n    }\n\n    scope.$watch('msg', function(data) {\n        if(!!data && !!data.payload && data.payload.client_verification_required){\n            scope.payload = data.payload;\n            scope.showDialog();\n        } else {\n            scope.closeDialog();\n        }        \n    });\n})(scope);\n\n</script>",
+        "storeOutMessages": false,
+        "fwdInMessages": false,
+        "resendOnRefresh": false,
+        "templateScope": "local",
+        "className": "",
+        "x": 1110,
+        "y": 280,
+        "wires": [
+            [
+                "3a14cfe2c9196748",
+                "cb85bef0072534b6"
+            ]
+        ]
+    },
+    {
+        "id": "16856d5cde41d087",
+        "type": "switch",
+        "z": "89994071a3026534",
+        "name": "check",
+        "property": "payload.valid",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "true"
+            },
+            {
+                "t": "false"
+            }
+        ],
+        "checkall": "false",
+        "repair": false,
+        "outputs": 2,
+        "x": 1430,
+        "y": 200,
+        "wires": [
+            [
+                "b3949482d2129852"
+            ],
+            [
+                "bb468637ba5f87c8"
+            ]
+        ]
+    },
+    {
+        "id": "b3949482d2129852",
+        "type": "function",
+        "z": "89994071a3026534",
+        "name": "pin_ok",
+        "func": "var msg2 = {};\nmsg2.topic = \"Pin successfully verified!\";\nmsg2.payload = \"\";\n    \nreturn [msg, msg2];",
+        "outputs": "2",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1595.8749961853027,
+        "y": 179.9999942779541,
+        "wires": [
+            [],
+            [
+                "86d396f390499b99"
+            ]
+        ]
+    },
+    {
+        "id": "bb468637ba5f87c8",
+        "type": "function",
+        "z": "89994071a3026534",
+        "name": "pin_error",
+        "func": " msg.topic = \"Wrong PIN, please try again\";\n msg.payload = \"\";\n    \nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1605.8749961853027,
+        "y": 219.9999942779541,
+        "wires": [
+            [
+                "86d396f390499b99"
+            ]
+        ]
+    },
+    {
+        "id": "86d396f390499b99",
+        "type": "ui_toast",
+        "z": "89994071a3026534",
+        "position": "top right",
+        "displayTime": "10",
+        "highlight": "",
+        "sendall": true,
+        "outputs": 0,
+        "ok": "OK",
+        "cancel": "",
+        "raw": false,
+        "className": "",
+        "topic": "",
+        "name": "",
+        "x": 1814,
+        "y": 193,
+        "wires": []
+    },
+    {
+        "id": "947e26be1abafcd4",
+        "type": "template",
+        "z": "89994071a3026534",
+        "name": "set payload",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "{\n  \"auth_token\": \"{{payload.auth.token}}\",\n  \"account_id\": \"{{payload.account.account_id}}\",\n  \"client_id\": \"{{payload.account.client_id}}\",\n  \"tier\": \"{{payload.account.tier}}\",\n  \"client_verification_required\": {{payload.account.client_verification_required}}\n}",
+        "output": "json",
+        "x": 930,
+        "y": 320,
+        "wires": [
+            [
+                "3e26a744de533099",
+                "c1c6e89c90121bcb"
+            ]
+        ]
+    },
+    {
+        "id": "c1c6e89c90121bcb",
+        "type": "credentials",
+        "z": "89994071a3026534",
+        "name": "",
+        "props": [
+            {
+                "value": "payload.auth_token",
+                "type": "msg"
+            },
+            {
+                "value": "payload.tier",
+                "type": "msg"
+            }
+        ],
+        "x": 1150,
+        "y": 320,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "cb85bef0072534b6",
+        "type": "debug",
+        "z": "89994071a3026534",
+        "name": "debug 58",
+        "active": true,
+        "tosidebar": true,
+        "console": true,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1350,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "3a14cfe2c9196748",
+        "type": "http request",
+        "z": "89994071a3026534",
+        "name": "Verify PIN",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "https://rest-{{verify_url.tier}}.immedia-semi.com/api/v4/account/{{verify_url.account_id}}/client/{{verify_url.client_id}}/pin/verify",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [
+            {
+                "keyType": "other",
+                "keyValue": "Content-Type",
+                "valueType": "other",
+                "valueValue": "application/json"
+            },
+            {
+                "keyType": "other",
+                "keyValue": "TOKEN_AUTH",
+                "valueType": "msg",
+                "valueValue": "verify_url.auth_token"
+            },
+            {
+                "keyType": "other",
+                "keyValue": "user-agent",
+                "valueType": "other",
+                "valueValue": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36"
+            }
+        ],
+        "x": 1280,
+        "y": 160,
+        "wires": [
+            [
+                "16856d5cde41d087",
+                "d3bf03c472f14b5c"
+            ]
+        ]
+    },
+    {
+        "id": "fc9b333fcd47d61f",
+        "type": "random",
+        "z": "89994071a3026534",
+        "name": "",
+        "low": 1,
+        "high": "1000000000",
+        "inte": "true",
+        "property": "rand",
+        "x": 300,
+        "y": 200,
+        "wires": [
+            [
+                "e32096b8a497ce6b"
+            ]
+        ]
+    },
+    {
+        "id": "19b34a85d431b8b3",
+        "type": "debug",
+        "z": "89994071a3026534",
+        "name": "debug 59",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 800,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "fa36bd61130fa111",
+        "type": "debug",
+        "z": "89994071a3026534",
+        "name": "debug 60",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 640,
+        "y": 220,
+        "wires": []
     }
 ]
