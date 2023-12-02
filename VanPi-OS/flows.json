@@ -214,6 +214,43 @@
         "env": []
     },
     {
+        "id": "49d03ff3cfaef44a",
+        "type": "subflow",
+        "name": "[Blink] Make API call",
+        "info": "Makes a call to the Blink API provided a set of stored credentials",
+        "category": "",
+        "in": [
+            {
+                "x": 50,
+                "y": 30,
+                "wires": [
+                    {
+                        "id": "ea1c24dc3a8a94cb"
+                    }
+                ]
+            }
+        ],
+        "out": [
+            {
+                "x": 1220,
+                "y": 80,
+                "wires": [
+                    {
+                        "id": "d9bcf7a9d12882ae",
+                        "port": 0
+                    },
+                    {
+                        "id": "16ba6226b794377b",
+                        "port": 0
+                    }
+                ]
+            }
+        ],
+        "env": [],
+        "meta": {},
+        "color": "#DDAA99"
+    },
+    {
         "id": "d9229161.b8548",
         "type": "ui_group",
         "name": "Switches",
@@ -1432,16 +1469,6 @@
         "hidden": false
     },
     {
-        "id": "702a94542631b5dd",
-        "type": "ui_spacer",
-        "z": "e2902b7e.e22d58",
-        "name": "spacer",
-        "group": "692e88bfa7c83733",
-        "order": 1,
-        "width": 1,
-        "height": 1
-    },
-    {
         "id": "da64ad927467e077",
         "type": "ui_group",
         "name": "blink-login",
@@ -1506,6 +1533,262 @@
         "name": "Home",
         "icon": "home",
         "order": 1
+    },
+    {
+        "id": "019e3d35bb02d1c2",
+        "type": "ui_group",
+        "name": "Blink cameras",
+        "tab": "a414bd12a2381eda",
+        "order": 3,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "fec5d0d58dfa1d8f",
+        "type": "file in",
+        "z": "49d03ff3cfaef44a",
+        "name": "Get stored Blink credentials",
+        "filename": "blink/auth.json",
+        "filenameType": "str",
+        "format": "utf8",
+        "chunk": false,
+        "sendError": false,
+        "encoding": "none",
+        "allProps": false,
+        "x": 280,
+        "y": 280,
+        "wires": [
+            [
+                "1ec7e60621ad9ad1"
+            ]
+        ]
+    },
+    {
+        "id": "d9bcf7a9d12882ae",
+        "type": "http request",
+        "z": "49d03ff3cfaef44a",
+        "name": "Call Blink API",
+        "method": "use",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "{{{request_url}}}",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [
+            {
+                "keyType": "other",
+                "keyValue": "Content-Type",
+                "valueType": "msg",
+                "valueValue": "headers.content_type"
+            },
+            {
+                "keyType": "other",
+                "keyValue": "TOKEN_AUTH",
+                "valueType": "msg",
+                "valueValue": "auth_token"
+            },
+            {
+                "keyType": "other",
+                "keyValue": "user-agent",
+                "valueType": "msg",
+                "valueValue": "headers.user_agent"
+            }
+        ],
+        "x": 1000,
+        "y": 160,
+        "wires": [
+            [
+                "f0fc9eb6797518b6"
+            ]
+        ]
+    },
+    {
+        "id": "1ec7e60621ad9ad1",
+        "type": "json",
+        "z": "49d03ff3cfaef44a",
+        "name": "Parse Blink credentials",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 420,
+        "y": 120,
+        "wires": [
+            [
+                "2d241730a3ac1b3a"
+            ]
+        ]
+    },
+    {
+        "id": "f0fc9eb6797518b6",
+        "type": "debug",
+        "z": "49d03ff3cfaef44a",
+        "name": "debug 66",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1240,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "2d241730a3ac1b3a",
+        "type": "function",
+        "z": "49d03ff3cfaef44a",
+        "name": "function 6",
+        "func": "const {\n    method,\n    api_version,\n    path,\n    full_path,\n    headers={}\n} = flow.get('request');\n\nconst {\n    content_type='application/json'\n} = headers;\n\nconst {\n    tier,\n    account_id,\n    auth_token\n} = msg.payload;\n\nconst base_url = `https://rest-${tier}.immedia-semi.com`;\nlet request_path;\nif(!!full_path) {\n    request_path = full_path;\n} else {\n    request_path = `api/${api_version}/accounts/${account_id}/${path}`;\n}\n\nreturn {\n    method,\n    auth_token,\n    request_url: `${base_url}/${request_path}`,\n    headers: {\n        content_type,\n        user_agen: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36'\n    }\n};",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 620,
+        "y": 120,
+        "wires": [
+            [
+                "cb257eac1342e856",
+                "bdc61958e09fd177"
+            ]
+        ]
+    },
+    {
+        "id": "cb257eac1342e856",
+        "type": "debug",
+        "z": "49d03ff3cfaef44a",
+        "name": "debug 67",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 660,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "ea1c24dc3a8a94cb",
+        "type": "function",
+        "z": "49d03ff3cfaef44a",
+        "name": "Set `flow.request`",
+        "func": "flow.set('request', msg.payload);\nreturn {};",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 150,
+        "y": 200,
+        "wires": [
+            [
+                "fec5d0d58dfa1d8f"
+            ]
+        ]
+    },
+    {
+        "id": "e56f26bd0eec128c",
+        "type": "http request",
+        "z": "49d03ff3cfaef44a",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": false,
+        "url": "",
+        "persist": false,
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 650,
+        "y": 360,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "bdc61958e09fd177",
+        "type": "switch",
+        "z": "49d03ff3cfaef44a",
+        "name": "Response type",
+        "property": "request.response_type",
+        "propertyType": "flow",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "binary",
+                "vt": "str"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 800,
+        "y": 120,
+        "wires": [
+            [
+                "16ba6226b794377b"
+            ],
+            [
+                "d9bcf7a9d12882ae"
+            ]
+        ]
+    },
+    {
+        "id": "16ba6226b794377b",
+        "type": "http request",
+        "z": "49d03ff3cfaef44a",
+        "name": "Call Blink API",
+        "method": "use",
+        "ret": "bin",
+        "paytoqs": "ignore",
+        "url": "{{{request_url}}}",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [
+            {
+                "keyType": "other",
+                "keyValue": "Content-Type",
+                "valueType": "msg",
+                "valueValue": "headers.content_type"
+            },
+            {
+                "keyType": "other",
+                "keyValue": "TOKEN_AUTH",
+                "valueType": "msg",
+                "valueValue": "auth_token"
+            },
+            {
+                "keyType": "other",
+                "keyValue": "user-agent",
+                "valueType": "msg",
+                "valueValue": "headers.user_agent"
+            }
+        ],
+        "x": 1000,
+        "y": 80,
+        "wires": [
+            [
+                "f0fc9eb6797518b6"
+            ]
+        ]
     },
     {
         "id": "bb0abe7e.248eb",
@@ -69837,6 +70120,7 @@
         "ok": "OK",
         "cancel": "",
         "raw": false,
+        "className": "",
         "topic": "",
         "name": "",
         "x": 670,
@@ -70283,6 +70567,7 @@
         "delay": 300,
         "topic": "",
         "sendOnBlur": true,
+        "className": "",
         "topicType": "str",
         "x": 260,
         "y": 860,
@@ -70307,6 +70592,9 @@
         "mode": "text",
         "delay": 300,
         "topic": "",
+        "sendOnBlur": true,
+        "className": "",
+        "topicType": "str",
         "x": 260,
         "y": 900,
         "wires": [
@@ -70461,11 +70749,12 @@
         "z": "67973ee8.553c3",
         "name": "",
         "filename": "pekaway/relay_name2",
+        "filenameType": "str",
         "appendNewline": false,
         "createDir": true,
         "overwriteFile": "true",
         "encoding": "none",
-        "x": 680,
+        "x": 720,
         "y": 900,
         "wires": [
             []
@@ -70573,11 +70862,12 @@
         "z": "67973ee8.553c3",
         "name": "",
         "filename": "pekaway/relay_name1",
+        "filenameType": "str",
         "appendNewline": false,
         "createDir": true,
         "overwriteFile": "true",
         "encoding": "none",
-        "x": 680,
+        "x": 720,
         "y": 860,
         "wires": [
             []
@@ -92629,7 +92919,7 @@
         "fieldType": "msg",
         "format": "handlebars",
         "syntax": "mustache",
-        "template": "{\n  \"unique_id\": \"node-red-test-{{rand}}\",\n  \"password\": \"{{payload.password}}\",\n  \"email\": \"{{payload.username}}\"\n}",
+        "template": "{\n  \"unique_id\": \"node-red-test\",\n  \"password\": \"{{payload.password}}\",\n  \"email\": \"{{payload.username}}\"\n}",
         "output": "json",
         "x": 470,
         "y": 260,
@@ -92681,7 +92971,7 @@
         "propertyType": "msg",
         "rules": [
             {
-                "t": "eq",
+                "t": "neq",
                 "v": "Invalid credentials",
                 "vt": "str"
             },
@@ -92695,9 +92985,11 @@
         "x": 770,
         "y": 340,
         "wires": [
-            [],
             [
                 "947e26be1abafcd4"
+            ],
+            [
+                "1f98c82512ff80e8"
             ]
         ]
     },
@@ -92720,8 +93012,8 @@
         "y": 280,
         "wires": [
             [
-                "3a14cfe2c9196748",
-                "cb85bef0072534b6"
+                "cb85bef0072534b6",
+                "3a14cfe2c9196748"
             ]
         ]
     },
@@ -92747,7 +93039,8 @@
         "y": 200,
         "wires": [
             [
-                "b3949482d2129852"
+                "b3949482d2129852",
+                "43ae4c989bbc01a9"
             ],
             [
                 "bb468637ba5f87c8"
@@ -92828,29 +93121,8 @@
         "wires": [
             [
                 "3e26a744de533099",
-                "c1c6e89c90121bcb"
+                "4c467e1c662071af"
             ]
-        ]
-    },
-    {
-        "id": "c1c6e89c90121bcb",
-        "type": "credentials",
-        "z": "89994071a3026534",
-        "name": "",
-        "props": [
-            {
-                "value": "payload.auth_token",
-                "type": "msg"
-            },
-            {
-                "value": "payload.tier",
-                "type": "msg"
-            }
-        ],
-        "x": 1150,
-        "y": 320,
-        "wires": [
-            []
         ]
     },
     {
@@ -92962,5 +93234,372 @@
         "x": 640,
         "y": 220,
         "wires": []
+    },
+    {
+        "id": "7f22109be21acc52",
+        "type": "file",
+        "z": "89994071a3026534",
+        "name": "",
+        "filename": "blink/auth.json",
+        "filenameType": "str",
+        "appendNewline": true,
+        "createDir": true,
+        "overwriteFile": "true",
+        "encoding": "none",
+        "x": 1880,
+        "y": 140,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "4c467e1c662071af",
+        "type": "function",
+        "z": "89994071a3026534",
+        "name": "Set `flow.blink_auth`",
+        "func": "flow.set('blink_auth', msg.payload);",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1140,
+        "y": 360,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "43ae4c989bbc01a9",
+        "type": "function",
+        "z": "89994071a3026534",
+        "name": "Get `flow.blink_auth`",
+        "func": "return {\n    payload: flow.get('blink_auth')\n}",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1640,
+        "y": 140,
+        "wires": [
+            [
+                "7f22109be21acc52",
+                "0b4e1a33da19aa0b"
+            ]
+        ]
+    },
+    {
+        "id": "0b4e1a33da19aa0b",
+        "type": "debug",
+        "z": "89994071a3026534",
+        "name": "debug 61",
+        "active": true,
+        "tosidebar": true,
+        "console": true,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1870,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "1f98c82512ff80e8",
+        "type": "function",
+        "z": "89994071a3026534",
+        "name": "login_error",
+        "func": "msg.topic = msg.payload.message;\nmsg.payload = \"\";\n    \nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 930,
+        "y": 380,
+        "wires": [
+            [
+                "aa028437cec72ea3"
+            ]
+        ]
+    },
+    {
+        "id": "aa028437cec72ea3",
+        "type": "ui_toast",
+        "z": "89994071a3026534",
+        "position": "top right",
+        "displayTime": "10",
+        "highlight": "",
+        "sendall": true,
+        "outputs": 0,
+        "ok": "OK",
+        "cancel": "",
+        "raw": false,
+        "className": "",
+        "topic": "",
+        "name": "",
+        "x": 1130,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "408cb1120796bc67",
+        "type": "subflow:49d03ff3cfaef44a",
+        "z": "89994071a3026534",
+        "name": "Get homescreen",
+        "x": 380,
+        "y": 680,
+        "wires": [
+            [
+                "f4effb803e218931"
+            ]
+        ]
+    },
+    {
+        "id": "9fbcfb7b5042fb15",
+        "type": "inject",
+        "z": "89994071a3026534",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 80,
+        "y": 680,
+        "wires": [
+            [
+                "c92ecf108cdeced7"
+            ]
+        ]
+    },
+    {
+        "id": "1ff896addcf8529f",
+        "type": "debug",
+        "z": "89994071a3026534",
+        "name": "debug 65",
+        "active": true,
+        "tosidebar": true,
+        "console": true,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1010,
+        "y": 600,
+        "wires": []
+    },
+    {
+        "id": "c92ecf108cdeced7",
+        "type": "function",
+        "z": "89994071a3026534",
+        "name": "function 5",
+        "func": "return {\n    \n    payload: {\n        method: 'get',\n        api_version: 'v3',\n        path: 'homescreen'\n    }\n}",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 220,
+        "y": 680,
+        "wires": [
+            [
+                "408cb1120796bc67"
+            ]
+        ]
+    },
+    {
+        "id": "fb8389f0453601bb",
+        "type": "function",
+        "z": "89994071a3026534",
+        "name": "Iterate over cameras",
+        "func": "const cameras = flow.get(\"blink_cameras\")\n\ncameras.forEach(({thumbnail}, index) => node.send({\n    payload: {\n        method: 'get',\n        full_path: thumbnail,\n        response_type: 'binary'\n    },\n    index\n}));",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1040,
+        "y": 640,
+        "wires": [
+            [
+                "8c7abe44d1de33bb"
+            ]
+        ]
+    },
+    {
+        "id": "8c7abe44d1de33bb",
+        "type": "subflow:49d03ff3cfaef44a",
+        "z": "89994071a3026534",
+        "name": "Get thumbnail",
+        "x": 1240,
+        "y": 640,
+        "wires": [
+            [
+                "add5376ed0a555bc",
+                "43121fa49f5ff227"
+            ]
+        ]
+    },
+    {
+        "id": "add5376ed0a555bc",
+        "type": "debug",
+        "z": "89994071a3026534",
+        "name": "debug 68",
+        "active": true,
+        "tosidebar": true,
+        "console": true,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1490,
+        "y": 760,
+        "wires": []
+    },
+    {
+        "id": "50a0e2e5f34440b0",
+        "type": "file",
+        "z": "89994071a3026534",
+        "name": "",
+        "filename": "filename",
+        "filenameType": "msg",
+        "appendNewline": false,
+        "createDir": true,
+        "overwriteFile": "true",
+        "encoding": "binary",
+        "x": 1660,
+        "y": 620,
+        "wires": [
+            [
+                "93e938920cca180a"
+            ]
+        ]
+    },
+    {
+        "id": "43121fa49f5ff227",
+        "type": "function",
+        "z": "89994071a3026534",
+        "name": "Set file name and content",
+        "func": "const i = (context.get(\"i\") || 0) + 1;\ncontext.set(\"i\", i);\n\nconst base_dir = 'public/blink/cameras/thumbnails'\n\nreturn {\n    payload: msg.payload.toString('binary'),\n    filename: `${base_dir}/thumbnail_${i}.jpg`,\n    index: i\n}",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1470,
+        "y": 620,
+        "wires": [
+            [
+                "50a0e2e5f34440b0"
+            ]
+        ]
+    },
+    {
+        "id": "62b1ccf71fe042d5",
+        "type": "debug",
+        "z": "89994071a3026534",
+        "name": "debug 69",
+        "active": true,
+        "tosidebar": true,
+        "console": true,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 2170,
+        "y": 620,
+        "wires": []
+    },
+    {
+        "id": "670a359a2ca51533",
+        "type": "ui_template",
+        "z": "89994071a3026534",
+        "group": "019e3d35bb02d1c2",
+        "name": "",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "format": "<div id=\"cameras-test\">\n    <div ng-repeat=\"camera in msg.cameras track by $index\">\n        {{camera.name}}<br/>\n        <img \n            src=\"/blink/cameras/thumbnails/thumbnail_{{$index+1}}.jpg\"\n            width=\"100%\"\n        />\n    </div>\n</div>",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 2020,
+        "y": 620,
+        "wires": [
+            [
+                "62b1ccf71fe042d5"
+            ]
+        ]
+    },
+    {
+        "id": "93e938920cca180a",
+        "type": "function",
+        "z": "89994071a3026534",
+        "name": "Iterate over cameras",
+        "func": "return {\n    cameras: flow.get(\"blink_cameras\")\n}",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1840,
+        "y": 620,
+        "wires": [
+            [
+                "670a359a2ca51533"
+            ]
+        ]
+    },
+    {
+        "id": "6fb19eaa2001871d",
+        "type": "subflow:49d03ff3cfaef44a",
+        "z": "89994071a3026534",
+        "name": "Refresh thumbnail",
+        "x": 810,
+        "y": 640,
+        "wires": [
+            [
+                "fb8389f0453601bb",
+                "1ff896addcf8529f"
+            ]
+        ]
+    },
+    {
+        "id": "f4effb803e218931",
+        "type": "function",
+        "z": "89994071a3026534",
+        "name": "Iterate over cameras",
+        "func": "const { cameras } = msg.payload;\n\nflow.set(\"blink_cameras\", cameras);\n\ncameras.forEach(({ id, network_id }) => node.send({\n    payload: {\n        method: 'post',\n        full_path: `network/${network_id}/camera/${id}/thumbnail`\n    }\n}));",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 580,
+        "y": 680,
+        "wires": [
+            [
+                "6fb19eaa2001871d"
+            ]
+        ]
     }
 ]
