@@ -26,7 +26,7 @@ start=`date +%s`
 startdate=`date`
 
 # define server address
-Server='https://git.pekaway.de/Vincent/vanpi/-/raw/main/pi4/'
+Server='./'
 
 # define color variables
 Cyan='\033[0;36m'
