@@ -255,19 +255,19 @@ echo -e "${Red}If connection is lost, RPI will reboot into Access Point Mode aut
 echo -e "${Red}--> logfile is saved at ${LOG_FILE}${NC}"
 echo "yes" > ~/pekaway/firstboot
 
-while true; do
-	read -r -p "Do you want to reboot now? [y/n]" input
+# while true; do
+# 	read -r -p "Do you want to reboot now? [y/n]" input
 	 
-	case $input in
-		  [yY][eE][sS]|[yY])
-				sudo reboot
-				break;;
-		  [nN][oO]|[nN])
-				echo "Reboot cancelled, please remember to reboot for the VanPi system to work properly!"
-				exit
-				;;
-		  *)
-				echo "Invalid input... please type 'y' (yes) or 'n' (no)"
-				;;
-	esac
-done
+# 	case $input in
+# 		  [yY][eE][sS]|[yY])
+# 				sudo reboot
+# 				break;;
+# 		  [nN][oO]|[nN])
+# 				echo "Reboot cancelled, please remember to reboot for the VanPi system to work properly!"
+# 				exit
+# 				;;
+# 		  *)
+# 				echo "Invalid input... please type 'y' (yes) or 'n' (no)"
+# 				;;
+# 	esac
+# done
