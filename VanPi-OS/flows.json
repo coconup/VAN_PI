@@ -221,8 +221,8 @@
         "category": "",
         "in": [
             {
-                "x": 50,
-                "y": 30,
+                "x": 60,
+                "y": 120,
                 "wires": [
                     {
                         "id": "ea1c24dc3a8a94cb"
@@ -232,15 +232,118 @@
         ],
         "out": [
             {
-                "x": 1220,
+                "x": 1760,
                 "y": 80,
                 "wires": [
                     {
-                        "id": "d9bcf7a9d12882ae",
+                        "id": "348d0da94af96ec6",
                         "port": 0
                     },
                     {
-                        "id": "16ba6226b794377b",
+                        "id": "c267a0c6e2e51312",
+                        "port": 1
+                    }
+                ]
+            }
+        ],
+        "env": [],
+        "meta": {},
+        "color": "#DDAA99"
+    },
+    {
+        "id": "4ae7d60c281d8a4b",
+        "type": "subflow",
+        "name": "[Blink] Get stored blink credentials",
+        "info": "",
+        "category": "",
+        "in": [
+            {
+                "x": 60,
+                "y": 80,
+                "wires": [
+                    {
+                        "id": "16ded80d661e4fa8"
+                    }
+                ]
+            }
+        ],
+        "out": [
+            {
+                "x": 600,
+                "y": 80,
+                "wires": [
+                    {
+                        "id": "e93078a8e0f71d7f",
+                        "port": 0
+                    }
+                ]
+            }
+        ],
+        "env": [],
+        "meta": {},
+        "color": "#DDAA99"
+    },
+    {
+        "id": "bd8069f1bbfb0642",
+        "type": "subflow",
+        "name": "[Blink[ Login with email and password",
+        "info": "",
+        "category": "",
+        "in": [
+            {
+                "x": 60,
+                "y": 80,
+                "wires": [
+                    {
+                        "id": "fc9b333fcd47d61f"
+                    }
+                ]
+            }
+        ],
+        "out": [
+            {
+                "x": 700,
+                "y": 80,
+                "wires": [
+                    {
+                        "id": "38846a29f0f17f02",
+                        "port": 0
+                    }
+                ]
+            }
+        ],
+        "env": [],
+        "meta": {},
+        "color": "#DDAA99"
+    },
+    {
+        "id": "86f0837c5db8870c",
+        "type": "subflow",
+        "name": "[Blink] Reauthenticate",
+        "info": "",
+        "category": "",
+        "in": [
+            {
+                "x": 80,
+                "y": 160,
+                "wires": [
+                    {
+                        "id": "40867e6757614191"
+                    }
+                ]
+            }
+        ],
+        "out": [
+            {
+                "x": 1840,
+                "y": 140,
+                "wires": [
+                    {
+                        "id": "2511709e73439373",
+                        "port": 0
+                    },
+                    {
+                        "id": "1ab3bbe16701992e",
                         "port": 0
                     }
                 ]
@@ -1546,30 +1649,10 @@
         "className": ""
     },
     {
-        "id": "fec5d0d58dfa1d8f",
-        "type": "file in",
-        "z": "49d03ff3cfaef44a",
-        "name": "Get stored Blink credentials",
-        "filename": "blink/auth.json",
-        "filenameType": "str",
-        "format": "utf8",
-        "chunk": false,
-        "sendError": false,
-        "encoding": "none",
-        "allProps": false,
-        "x": 280,
-        "y": 280,
-        "wires": [
-            [
-                "1ec7e60621ad9ad1"
-            ]
-        ]
-    },
-    {
         "id": "d9bcf7a9d12882ae",
         "type": "http request",
         "z": "49d03ff3cfaef44a",
-        "name": "Call Blink API",
+        "name": "Call Blink API (JSON response)",
         "method": "use",
         "ret": "obj",
         "paytoqs": "ignore",
@@ -1600,27 +1683,11 @@
                 "valueValue": "headers.user_agent"
             }
         ],
-        "x": 1000,
+        "x": 1110,
         "y": 160,
         "wires": [
             [
-                "f0fc9eb6797518b6"
-            ]
-        ]
-    },
-    {
-        "id": "1ec7e60621ad9ad1",
-        "type": "json",
-        "z": "49d03ff3cfaef44a",
-        "name": "Parse Blink credentials",
-        "property": "payload",
-        "action": "",
-        "pretty": false,
-        "x": 420,
-        "y": 120,
-        "wires": [
-            [
-                "2d241730a3ac1b3a"
+                "c267a0c6e2e51312"
             ]
         ]
     },
@@ -1636,7 +1703,7 @@
         "complete": "false",
         "statusVal": "",
         "statusType": "auto",
-        "x": 1240,
+        "x": 1740,
         "y": 160,
         "wires": []
     },
@@ -1644,38 +1711,20 @@
         "id": "2d241730a3ac1b3a",
         "type": "function",
         "z": "49d03ff3cfaef44a",
-        "name": "function 6",
+        "name": "Request params",
         "func": "const {\n    method,\n    api_version,\n    path,\n    full_path,\n    headers={}\n} = flow.get('request');\n\nconst {\n    content_type='application/json'\n} = headers;\n\nconst {\n    tier,\n    account_id,\n    auth_token\n} = msg.payload;\n\nconst base_url = `https://rest-${tier}.immedia-semi.com`;\nlet request_path;\nif(!!full_path) {\n    request_path = full_path;\n} else {\n    request_path = `api/${api_version}/accounts/${account_id}/${path}`;\n}\n\nreturn {\n    method,\n    auth_token,\n    request_url: `${base_url}/${request_path}`,\n    headers: {\n        content_type,\n        user_agen: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36'\n    }\n};",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 620,
+        "x": 680,
         "y": 120,
         "wires": [
             [
-                "cb257eac1342e856",
                 "bdc61958e09fd177"
             ]
         ]
-    },
-    {
-        "id": "cb257eac1342e856",
-        "type": "debug",
-        "z": "49d03ff3cfaef44a",
-        "name": "debug 67",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "true",
-        "targetType": "full",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 660,
-        "y": 220,
-        "wires": []
     },
     {
         "id": "ea1c24dc3a8a94cb",
@@ -1688,32 +1737,12 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 150,
-        "y": 200,
+        "x": 190,
+        "y": 120,
         "wires": [
             [
-                "fec5d0d58dfa1d8f"
+                "e9061d77add2570c"
             ]
-        ]
-    },
-    {
-        "id": "e56f26bd0eec128c",
-        "type": "http request",
-        "z": "49d03ff3cfaef44a",
-        "name": "",
-        "method": "GET",
-        "ret": "txt",
-        "paytoqs": false,
-        "url": "",
-        "persist": false,
-        "insecureHTTPParser": false,
-        "authType": "",
-        "senderr": false,
-        "headers": [],
-        "x": 650,
-        "y": 360,
-        "wires": [
-            []
         ]
     },
     {
@@ -1736,7 +1765,7 @@
         "checkall": "true",
         "repair": false,
         "outputs": 2,
-        "x": 800,
+        "x": 860,
         "y": 120,
         "wires": [
             [
@@ -1751,7 +1780,7 @@
         "id": "16ba6226b794377b",
         "type": "http request",
         "z": "49d03ff3cfaef44a",
-        "name": "Call Blink API",
+        "name": "Call Blink API (binary response)",
         "method": "use",
         "ret": "bin",
         "paytoqs": "ignore",
@@ -1782,13 +1811,446 @@
                 "valueValue": "headers.user_agent"
             }
         ],
-        "x": 1000,
+        "x": 1110,
+        "y": 80,
+        "wires": [
+            [
+                "403e8f401d8e479e"
+            ]
+        ]
+    },
+    {
+        "id": "348d0da94af96ec6",
+        "type": "function",
+        "z": "49d03ff3cfaef44a",
+        "name": "Wrap response",
+        "func": "return {\n    payload: {\n        request: flow.get('request'),\n        data: msg.payload.toString('binary')\n    }\n}",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1560,
         "y": 80,
         "wires": [
             [
                 "f0fc9eb6797518b6"
             ]
         ]
+    },
+    {
+        "id": "2b56300964c14e81",
+        "type": "catch",
+        "z": "49d03ff3cfaef44a",
+        "name": "Auth error",
+        "scope": [
+            "d9bcf7a9d12882ae",
+            "16ba6226b794377b"
+        ],
+        "uncaught": false,
+        "x": 1040,
+        "y": 240,
+        "wires": [
+            [
+                "d64073f71b3e6718"
+            ]
+        ]
+    },
+    {
+        "id": "e9061d77add2570c",
+        "type": "subflow:4ae7d60c281d8a4b",
+        "z": "49d03ff3cfaef44a",
+        "name": "",
+        "x": 440,
+        "y": 120,
+        "wires": [
+            [
+                "2d241730a3ac1b3a"
+            ]
+        ]
+    },
+    {
+        "id": "d64073f71b3e6718",
+        "type": "subflow:86f0837c5db8870c",
+        "z": "49d03ff3cfaef44a",
+        "name": "",
+        "x": 1220,
+        "y": 240,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "403e8f401d8e479e",
+        "type": "switch",
+        "z": "49d03ff3cfaef44a",
+        "name": "Unauthorized",
+        "property": "payload.code",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "101",
+                "vt": "num"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 1380,
+        "y": 80,
+        "wires": [
+            [
+                "d64073f71b3e6718"
+            ],
+            [
+                "348d0da94af96ec6"
+            ]
+        ]
+    },
+    {
+        "id": "c267a0c6e2e51312",
+        "type": "switch",
+        "z": "49d03ff3cfaef44a",
+        "name": "Unauthorized",
+        "property": "payload.code",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "101",
+                "vt": "num"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 1480,
+        "y": 160,
+        "wires": [
+            [
+                "d64073f71b3e6718"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "16ded80d661e4fa8",
+        "type": "file in",
+        "z": "4ae7d60c281d8a4b",
+        "name": "Get stored Blink credentials",
+        "filename": "blink/auth.json",
+        "filenameType": "str",
+        "format": "utf8",
+        "chunk": false,
+        "sendError": false,
+        "encoding": "none",
+        "allProps": false,
+        "x": 220,
+        "y": 80,
+        "wires": [
+            [
+                "e93078a8e0f71d7f"
+            ]
+        ]
+    },
+    {
+        "id": "e93078a8e0f71d7f",
+        "type": "json",
+        "z": "4ae7d60c281d8a4b",
+        "name": "Parse Blink credentials",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 460,
+        "y": 80,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "38846a29f0f17f02",
+        "type": "http request",
+        "z": "bd8069f1bbfb0642",
+        "name": "login",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "https://rest-prod.immedia-semi.com/api/v5/account/login",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [
+            {
+                "keyType": "other",
+                "keyValue": "Content-Type",
+                "valueType": "other",
+                "valueValue": "application/json"
+            }
+        ],
+        "x": 610,
+        "y": 80,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "fc9b333fcd47d61f",
+        "type": "random",
+        "z": "bd8069f1bbfb0642",
+        "name": "",
+        "low": 1,
+        "high": "1000000000",
+        "inte": "true",
+        "property": "rand",
+        "x": 160,
+        "y": 80,
+        "wires": [
+            [
+                "7ab633270a32e716"
+            ]
+        ]
+    },
+    {
+        "id": "7ab633270a32e716",
+        "type": "function",
+        "z": "bd8069f1bbfb0642",
+        "name": "Set `flow.blink_auth` and set payload",
+        "func": "const payload = {\n    unique_id: msg.payload.unique_id || `van-pi-${msg.rand}`,\n    reauth: msg.payload.reauth,\n    password: msg.payload.password,\n    email: msg.payload.email\n};\n\nflow.set(\"blink_auth\", payload);\n\nreturn {\n    payload\n}",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 390,
+        "y": 80,
+        "wires": [
+            [
+                "38846a29f0f17f02"
+            ]
+        ]
+    },
+    {
+        "id": "40867e6757614191",
+        "type": "subflow:4ae7d60c281d8a4b",
+        "z": "86f0837c5db8870c",
+        "name": "",
+        "x": 260,
+        "y": 160,
+        "wires": [
+            [
+                "b90cca73289b8786"
+            ]
+        ]
+    },
+    {
+        "id": "b90cca73289b8786",
+        "type": "function",
+        "z": "86f0837c5db8870c",
+        "name": "Set payload",
+        "func": "flow.set('blink_auth', msg.payload);\n\nconst {\n    email,\n    password,\n    unique_id\n} = msg.payload;\n\nreturn {\n    payload: {\n        email,\n        password,\n        unique_id,\n        reauth: true\n    }\n}",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 490,
+        "y": 160,
+        "wires": [
+            [
+                "492ce675a2c3c8a2",
+                "d9d51feb84972d33"
+            ]
+        ]
+    },
+    {
+        "id": "492ce675a2c3c8a2",
+        "type": "subflow:bd8069f1bbfb0642",
+        "z": "86f0837c5db8870c",
+        "name": "",
+        "x": 730,
+        "y": 160,
+        "wires": [
+            [
+                "8ece5dd7839d0649"
+            ]
+        ]
+    },
+    {
+        "id": "8ece5dd7839d0649",
+        "type": "switch",
+        "z": "86f0837c5db8870c",
+        "name": "",
+        "property": "payload.message",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "neq",
+                "v": "Invalid credentials",
+                "vt": "str"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "false",
+        "repair": false,
+        "outputs": 2,
+        "x": 950,
+        "y": 160,
+        "wires": [
+            [
+                "1ef5ad4e4f679687"
+            ],
+            [
+                "db085ccae82531ff"
+            ]
+        ]
+    },
+    {
+        "id": "1ef5ad4e4f679687",
+        "type": "switch",
+        "z": "86f0837c5db8870c",
+        "name": "",
+        "property": "payload.account.client_verification_required",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "false"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "false",
+        "repair": false,
+        "outputs": 2,
+        "x": 1090,
+        "y": 120,
+        "wires": [
+            [
+                "d5da72967f1b7b38"
+            ],
+            [
+                "db085ccae82531ff"
+            ]
+        ]
+    },
+    {
+        "id": "db085ccae82531ff",
+        "type": "function",
+        "z": "86f0837c5db8870c",
+        "name": "TODO send email?",
+        "func": "",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1290,
+        "y": 180,
+        "wires": [
+            [
+                "1ab3bbe16701992e"
+            ]
+        ]
+    },
+    {
+        "id": "d5da72967f1b7b38",
+        "type": "function",
+        "z": "86f0837c5db8870c",
+        "name": "Get `flow.blink_auth`",
+        "func": "return {\n    payload: {\n        ...flow.get('blink_auth'),\n        auth_token: msg.payload.auth.token\n    }\n}",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1280,
+        "y": 80,
+        "wires": [
+            [
+                "1283ce5c0f8e1edc"
+            ]
+        ]
+    },
+    {
+        "id": "1283ce5c0f8e1edc",
+        "type": "file",
+        "z": "86f0837c5db8870c",
+        "name": "",
+        "filename": "blink/auth.json",
+        "filenameType": "str",
+        "appendNewline": true,
+        "createDir": true,
+        "overwriteFile": "true",
+        "encoding": "none",
+        "x": 1480,
+        "y": 80,
+        "wires": [
+            [
+                "2511709e73439373"
+            ]
+        ]
+    },
+    {
+        "id": "2511709e73439373",
+        "type": "template",
+        "z": "86f0837c5db8870c",
+        "name": "Set status success",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "{\n    \"status\": \"success\"\n}",
+        "output": "str",
+        "x": 1670,
+        "y": 80,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "1ab3bbe16701992e",
+        "type": "template",
+        "z": "86f0837c5db8870c",
+        "name": "Set status error",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "{\n    \"status\": \"error\"\n}",
+        "output": "str",
+        "x": 1480,
+        "y": 180,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "d9d51feb84972d33",
+        "type": "debug",
+        "z": "86f0837c5db8870c",
+        "name": "debug 74",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 700,
+        "y": 280,
+        "wires": []
     },
     {
         "id": "bb0abe7e.248eb",
@@ -46853,7 +47315,8 @@
         "y": 1340,
         "wires": [
             [
-                "57fd6373ec601066"
+                "57fd6373ec601066",
+                "a4b894bd92b4a388"
             ]
         ]
     },
@@ -50407,6 +50870,23 @@
         ],
         "x": 985,
         "y": 2620,
+        "wires": []
+    },
+    {
+        "id": "a4b894bd92b4a388",
+        "type": "debug",
+        "z": "e78e73d3.53155",
+        "name": "debug 72",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 340,
+        "y": 1160,
         "wires": []
     },
     {
@@ -69292,6 +69772,9 @@
         "mode": "text",
         "delay": 300,
         "topic": "",
+        "sendOnBlur": true,
+        "className": "",
+        "topicType": "str",
         "x": 300,
         "y": 1460,
         "wires": [
@@ -69614,11 +70097,12 @@
         "z": "67973ee8.553c3",
         "name": "",
         "filename": "pekaway/tempsensor2",
+        "filenameType": "str",
         "appendNewline": false,
         "createDir": true,
         "overwriteFile": "true",
         "encoding": "none",
-        "x": 700,
+        "x": 740,
         "y": 1460,
         "wires": [
             []
@@ -70846,11 +71330,12 @@
         "z": "67973ee8.553c3",
         "name": "",
         "filename": "pekaway/relay_name8",
+        "filenameType": "str",
         "appendNewline": false,
         "createDir": true,
         "overwriteFile": "true",
         "encoding": "none",
-        "x": 680,
+        "x": 720,
         "y": 1140,
         "wires": [
             []
@@ -72208,7 +72693,10 @@
         "tls": "",
         "persist": false,
         "proxy": "",
+        "insecureHTTPParser": false,
         "authType": "",
+        "senderr": false,
+        "headers": [],
         "x": 630,
         "y": 2020,
         "wires": [
@@ -92860,8 +93348,8 @@
         "height": 0,
         "options": [
             {
-                "label": "Username",
-                "value": "username",
+                "label": "Email",
+                "value": "email",
                 "type": "text",
                 "required": true,
                 "rows": null
@@ -92875,7 +93363,7 @@
             }
         ],
         "formValue": {
-            "username": "",
+            "email": "",
             "password": ""
         },
         "payload": "",
@@ -92885,11 +93373,11 @@
         "topicType": "msg",
         "splitLayout": "",
         "className": "",
-        "x": 150,
-        "y": 140,
+        "x": 130,
+        "y": 320,
         "wires": [
             [
-                "fc9b333fcd47d61f"
+                "9798fa60401f90f9"
             ]
         ]
     },
@@ -92906,61 +93394,9 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 1490,
-        "y": 80,
+        "x": 1850,
+        "y": 40,
         "wires": []
-    },
-    {
-        "id": "e32096b8a497ce6b",
-        "type": "template",
-        "z": "89994071a3026534",
-        "name": "set payload",
-        "field": "payload",
-        "fieldType": "msg",
-        "format": "handlebars",
-        "syntax": "mustache",
-        "template": "{\n  \"unique_id\": \"node-red-test\",\n  \"password\": \"{{payload.password}}\",\n  \"email\": \"{{payload.username}}\"\n}",
-        "output": "json",
-        "x": 470,
-        "y": 260,
-        "wires": [
-            [
-                "38846a29f0f17f02",
-                "fa36bd61130fa111"
-            ]
-        ]
-    },
-    {
-        "id": "38846a29f0f17f02",
-        "type": "http request",
-        "z": "89994071a3026534",
-        "name": "login",
-        "method": "POST",
-        "ret": "obj",
-        "paytoqs": "ignore",
-        "url": "https://rest-prod.immedia-semi.com/api/v5/account/login",
-        "tls": "",
-        "persist": false,
-        "proxy": "",
-        "insecureHTTPParser": false,
-        "authType": "",
-        "senderr": false,
-        "headers": [
-            {
-                "keyType": "other",
-                "keyValue": "Content-Type",
-                "valueType": "other",
-                "valueValue": "application/json"
-            }
-        ],
-        "x": 630,
-        "y": 300,
-        "wires": [
-            [
-                "38c340be3a5d194e",
-                "19b34a85d431b8b3"
-            ]
-        ]
     },
     {
         "id": "38c340be3a5d194e",
@@ -92982,8 +93418,8 @@
         "checkall": "false",
         "repair": false,
         "outputs": 2,
-        "x": 770,
-        "y": 340,
+        "x": 610,
+        "y": 320,
         "wires": [
             [
                 "947e26be1abafcd4"
@@ -93008,8 +93444,8 @@
         "resendOnRefresh": false,
         "templateScope": "local",
         "className": "",
-        "x": 1110,
-        "y": 280,
+        "x": 1470,
+        "y": 240,
         "wires": [
             [
                 "cb85bef0072534b6",
@@ -93035,8 +93471,8 @@
         "checkall": "false",
         "repair": false,
         "outputs": 2,
-        "x": 1430,
-        "y": 200,
+        "x": 1790,
+        "y": 160,
         "wires": [
             [
                 "b3949482d2129852",
@@ -93058,8 +93494,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1595.8749961853027,
-        "y": 179.9999942779541,
+        "x": 1955.8749961853027,
+        "y": 139.9999942779541,
         "wires": [
             [],
             [
@@ -93078,8 +93514,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1605.8749961853027,
-        "y": 219.9999942779541,
+        "x": 1965.8749961853027,
+        "y": 179.9999942779541,
         "wires": [
             [
                 "86d396f390499b99"
@@ -93101,8 +93537,8 @@
         "className": "",
         "topic": "",
         "name": "",
-        "x": 1814,
-        "y": 193,
+        "x": 2174,
+        "y": 153,
         "wires": []
     },
     {
@@ -93116,11 +93552,10 @@
         "syntax": "mustache",
         "template": "{\n  \"auth_token\": \"{{payload.auth.token}}\",\n  \"account_id\": \"{{payload.account.account_id}}\",\n  \"client_id\": \"{{payload.account.client_id}}\",\n  \"tier\": \"{{payload.account.tier}}\",\n  \"client_verification_required\": {{payload.account.client_verification_required}}\n}",
         "output": "json",
-        "x": 930,
-        "y": 320,
+        "x": 770,
+        "y": 300,
         "wires": [
             [
-                "3e26a744de533099",
                 "4c467e1c662071af"
             ]
         ]
@@ -93138,8 +93573,8 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 1350,
-        "y": 280,
+        "x": 1710,
+        "y": 240,
         "wires": []
     },
     {
@@ -93177,63 +93612,14 @@
                 "valueValue": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36"
             }
         ],
-        "x": 1280,
-        "y": 160,
+        "x": 1640,
+        "y": 120,
         "wires": [
             [
                 "16856d5cde41d087",
                 "d3bf03c472f14b5c"
             ]
         ]
-    },
-    {
-        "id": "fc9b333fcd47d61f",
-        "type": "random",
-        "z": "89994071a3026534",
-        "name": "",
-        "low": 1,
-        "high": "1000000000",
-        "inte": "true",
-        "property": "rand",
-        "x": 300,
-        "y": 200,
-        "wires": [
-            [
-                "e32096b8a497ce6b"
-            ]
-        ]
-    },
-    {
-        "id": "19b34a85d431b8b3",
-        "type": "debug",
-        "z": "89994071a3026534",
-        "name": "debug 59",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "false",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 800,
-        "y": 280,
-        "wires": []
-    },
-    {
-        "id": "fa36bd61130fa111",
-        "type": "debug",
-        "z": "89994071a3026534",
-        "name": "debug 60",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "false",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 640,
-        "y": 220,
-        "wires": []
     },
     {
         "id": "7f22109be21acc52",
@@ -93246,8 +93632,8 @@
         "createDir": true,
         "overwriteFile": "true",
         "encoding": "none",
-        "x": 1880,
-        "y": 140,
+        "x": 2240,
+        "y": 100,
         "wires": [
             []
         ]
@@ -93257,16 +93643,18 @@
         "type": "function",
         "z": "89994071a3026534",
         "name": "Set `flow.blink_auth`",
-        "func": "flow.set('blink_auth', msg.payload);",
+        "func": "flow.set(\n    'blink_auth', \n    {\n        ...flow.get('blink_auth'),\n        ...msg.payload\n    }\n);\n\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1140,
-        "y": 360,
+        "x": 980,
+        "y": 280,
         "wires": [
-            []
+            [
+                "212d88b58d75e918"
+            ]
         ]
     },
     {
@@ -93274,14 +93662,14 @@
         "type": "function",
         "z": "89994071a3026534",
         "name": "Get `flow.blink_auth`",
-        "func": "return {\n    payload: flow.get('blink_auth')\n}",
+        "func": "const {\n    client_verification_required,\n    reauth,\n    ...payload\n} = flow.get('blink_auth');\n\nreturn { payload }",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1640,
-        "y": 140,
+        "x": 2000,
+        "y": 100,
         "wires": [
             [
                 "7f22109be21acc52",
@@ -93302,8 +93690,8 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 1870,
-        "y": 100,
+        "x": 2230,
+        "y": 60,
         "wires": []
     },
     {
@@ -93317,8 +93705,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 930,
-        "y": 380,
+        "x": 770,
+        "y": 360,
         "wires": [
             [
                 "aa028437cec72ea3"
@@ -93340,8 +93728,8 @@
         "className": "",
         "topic": "",
         "name": "",
-        "x": 1130,
-        "y": 420,
+        "x": 970,
+        "y": 400,
         "wires": []
     },
     {
@@ -93349,11 +93737,12 @@
         "type": "subflow:49d03ff3cfaef44a",
         "z": "89994071a3026534",
         "name": "Get homescreen",
-        "x": 380,
+        "x": 480,
         "y": 680,
         "wires": [
             [
-                "f4effb803e218931"
+                "f4effb803e218931",
+                "8a54c6d92a9985c3"
             ]
         ]
     },
@@ -93371,14 +93760,14 @@
                 "vt": "str"
             }
         ],
-        "repeat": "",
+        "repeat": "900",
         "crontab": "",
-        "once": false,
+        "once": true,
         "onceDelay": 0.1,
         "topic": "",
         "payload": "",
         "payloadType": "date",
-        "x": 80,
+        "x": 150,
         "y": 680,
         "wires": [
             [
@@ -93399,8 +93788,8 @@
         "targetType": "full",
         "statusVal": "",
         "statusType": "auto",
-        "x": 1010,
-        "y": 600,
+        "x": 1130,
+        "y": 640,
         "wires": []
     },
     {
@@ -93408,13 +93797,13 @@
         "type": "function",
         "z": "89994071a3026534",
         "name": "function 5",
-        "func": "return {\n    \n    payload: {\n        method: 'get',\n        api_version: 'v3',\n        path: 'homescreen'\n    }\n}",
+        "func": "context.set(\"i\", 0);\n\nreturn {    \n    payload: {\n        method: 'get',\n        api_version: 'v3',\n        path: 'homescreen'\n    }\n}",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 220,
+        "x": 300,
         "y": 680,
         "wires": [
             [
@@ -93427,14 +93816,14 @@
         "type": "function",
         "z": "89994071a3026534",
         "name": "Iterate over cameras",
-        "func": "const cameras = flow.get(\"blink_cameras\")\n\ncameras.forEach(({thumbnail}, index) => node.send({\n    payload: {\n        method: 'get',\n        full_path: thumbnail,\n        response_type: 'binary'\n    },\n    index\n}));",
+        "func": "const cameras = flow.get(\"blink_cameras\")\n\ncameras.forEach(({thumbnail}, index) => node.send({\n    payload: {\n        method: 'get',\n        full_path: thumbnail,\n        response_type: 'binary',\n        index\n    }\n}));",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1040,
-        "y": 640,
+        "x": 1160,
+        "y": 680,
         "wires": [
             [
                 "8c7abe44d1de33bb"
@@ -93446,8 +93835,8 @@
         "type": "subflow:49d03ff3cfaef44a",
         "z": "89994071a3026534",
         "name": "Get thumbnail",
-        "x": 1240,
-        "y": 640,
+        "x": 1360,
+        "y": 680,
         "wires": [
             [
                 "add5376ed0a555bc",
@@ -93468,8 +93857,8 @@
         "targetType": "full",
         "statusVal": "",
         "statusType": "auto",
-        "x": 1490,
-        "y": 760,
+        "x": 1550,
+        "y": 720,
         "wires": []
     },
     {
@@ -93483,8 +93872,8 @@
         "createDir": true,
         "overwriteFile": "true",
         "encoding": "binary",
-        "x": 1660,
-        "y": 620,
+        "x": 1800,
+        "y": 680,
         "wires": [
             [
                 "93e938920cca180a"
@@ -93496,14 +93885,14 @@
         "type": "function",
         "z": "89994071a3026534",
         "name": "Set file name and content",
-        "func": "const i = (context.get(\"i\") || 0) + 1;\ncontext.set(\"i\", i);\n\nconst base_dir = 'public/blink/cameras/thumbnails'\n\nreturn {\n    payload: msg.payload.toString('binary'),\n    filename: `${base_dir}/thumbnail_${i}.jpg`,\n    index: i\n}",
+        "func": "const {index} = msg.payload.request;\nconst base_dir = 'public/blink/cameras/thumbnails';\nconst timestamp = new Date().getTime();\nconst filename = `${base_dir}/thumbnail_${index}_${timestamp}.jpg`;\n\nlet cameras = {\n    ...flow.get(\"blink_cameras\")\n};\ncameras[index].local_thumbnail = filename.replace('public/', '/');\nflow.set(\"blink_cameras\", cameras);\n\nreturn {\n    payload: msg.payload.data,\n    filename,\n    index\n}",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1470,
-        "y": 620,
+        "x": 1590,
+        "y": 680,
         "wires": [
             [
                 "50a0e2e5f34440b0"
@@ -93523,8 +93912,8 @@
         "targetType": "full",
         "statusVal": "",
         "statusType": "auto",
-        "x": 2170,
-        "y": 620,
+        "x": 2370,
+        "y": 680,
         "wires": []
     },
     {
@@ -93533,17 +93922,17 @@
         "z": "89994071a3026534",
         "group": "019e3d35bb02d1c2",
         "name": "",
-        "order": 1,
-        "width": 0,
-        "height": 0,
-        "format": "<div id=\"cameras-test\">\n    <div ng-repeat=\"camera in msg.cameras track by $index\">\n        {{camera.name}}<br/>\n        <img \n            src=\"/blink/cameras/thumbnails/thumbnail_{{$index+1}}.jpg\"\n            width=\"100%\"\n        />\n    </div>\n</div>",
+        "order": 2,
+        "width": "6",
+        "height": "18",
+        "format": "<div id=\"cameras-test\">\n    <div ng-repeat=\"camera in msg.cameras track by $index\">\n        {{camera.name}}<br/>\n        <img \n            src=\"{{camera.local_thumbnail}}\"\n            width=\"100%\"\n        />\n    </div>\n</div>",
         "storeOutMessages": true,
         "fwdInMessages": true,
         "resendOnRefresh": true,
         "templateScope": "local",
         "className": "",
-        "x": 2020,
-        "y": 620,
+        "x": 2200,
+        "y": 680,
         "wires": [
             [
                 "62b1ccf71fe042d5"
@@ -93561,8 +93950,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1840,
-        "y": 620,
+        "x": 2000,
+        "y": 680,
         "wires": [
             [
                 "670a359a2ca51533"
@@ -93574,8 +93963,8 @@
         "type": "subflow:49d03ff3cfaef44a",
         "z": "89994071a3026534",
         "name": "Refresh thumbnail",
-        "x": 810,
-        "y": 640,
+        "x": 930,
+        "y": 680,
         "wires": [
             [
                 "fb8389f0453601bb",
@@ -93594,12 +93983,107 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 580,
+        "x": 700,
         "y": 680,
         "wires": [
             [
                 "6fb19eaa2001871d"
             ]
         ]
+    },
+    {
+        "id": "212d88b58d75e918",
+        "type": "switch",
+        "z": "89994071a3026534",
+        "name": "Client verification required?",
+        "property": "payload.client_verification_required",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "true"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 1240,
+        "y": 280,
+        "wires": [
+            [
+                "3e26a744de533099"
+            ],
+            [
+                "ae1cc765e8a9b69b"
+            ]
+        ]
+    },
+    {
+        "id": "449a909c3f7a32da",
+        "type": "ui_toast",
+        "z": "89994071a3026534",
+        "position": "top right",
+        "displayTime": "10",
+        "highlight": "",
+        "sendall": true,
+        "outputs": 0,
+        "ok": "OK",
+        "cancel": "",
+        "raw": false,
+        "className": "",
+        "topic": "",
+        "name": "",
+        "x": 1630,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "ae1cc765e8a9b69b",
+        "type": "function",
+        "z": "89994071a3026534",
+        "name": "Login ok",
+        "func": "return {\n    topic: \"Successfully logged in\"\n}",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1460,
+        "y": 320,
+        "wires": [
+            [
+                "449a909c3f7a32da"
+            ]
+        ]
+    },
+    {
+        "id": "9798fa60401f90f9",
+        "type": "subflow:bd8069f1bbfb0642",
+        "z": "89994071a3026534",
+        "x": 370,
+        "y": 320,
+        "wires": [
+            [
+                "38c340be3a5d194e"
+            ]
+        ]
+    },
+    {
+        "id": "8a54c6d92a9985c3",
+        "type": "debug",
+        "z": "89994071a3026534",
+        "name": "debug 73",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 680,
+        "y": 740,
+        "wires": []
     }
 ]
